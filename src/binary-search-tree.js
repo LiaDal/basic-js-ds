@@ -16,143 +16,136 @@ class BinarySearchTree {
   }
 
   add(data) {
-    const newNode = new Node(data)
-    if(!this.nodeRoot){
-      this.nodeRoot = newNode
-      return
-    }
-   
-      let currentNode = this.nodeRoot
 
-      while(currentNode){
-        if(newNode.data < currentNode.data){
-          if(!currentNode.left){
-            currentNode.left = newNode
-            return
-          }
+    this.nodeRoot = addFunc(this.nodeRoot, data)
 
-          currentNode = currentNode.left
-        } else {
-            if(!currentNode.left){
-              currentNode.left = newNode
-              return
-            }
-
-          currentNode = currentNode.right
+    function addFunc(node, data) {
+      if (!node) {
+        return new Node(data)
       }
+
+      if (node.data === data) {
+        return node
+      }
+
+      if (data < node.data) {
+        node.left = addFunc(node.left, data)
+      } else {
+        node.right = addFunc(node.right, data)
+      }
+
+      return node
     }
   }
 
   has(data) {
 
-    return searchEl(this.nodeRoot, data)
+    return hasFunc(this.nodeRoot, data)
 
-    function searchEl(node, data) {
-      if(!node) {
-        return false
+    function hasFunc(node, data) {
+      if (!node) {
+        return false;
       }
-      if(node.data === data) {
+
+      if (node.data === data) {
         return true
       }
-      if(data < node.data) {
-        return searchEl(node.left, data)
-      } else {
-        return searchEl(node.right, data)
+
+      if(data < node.data){
+        return hasFunc(node.left, data)
       }
+        return hasFunc(node.right, data)
     }
   }
 
   find(data) {
-    return  getNode(this.nodeRoot, data)
 
-    function getNode(node, data) {
-      if(!node) {
+    return findFunc(this.nodeRoot, data)
+
+    function findFunc(node, data) {
+      if (!node) {
         return null
       }
-      if(node.data === data) {
-        console.log(node.data)
+      if (node.data === data) {
         return node
       }
+      
+      if(data < node.data){
+        return findFunc(node.left, data)
+      }
+        return findFunc(node.right, data)
+    }
+  }
 
-      if(node.data > data) {
-        return getNode(node.left, data)
-      } else{
-        return getNode(node.right, data)
+  remove(data) {
+
+    this.nodeRoot = removeFunc(this.nodeRoot, data)
+
+    function removeFunc(node, data) {
+      if (!node) {
+        return null
+      }
+
+      if (data < node.data) {
+        node.left = removeFunc(node.left, data)
+        return node
+      } else if (node.data < data) {
+        node.right = removeFunc(node.right, data)
+        return node
+      } else {
+        if (!node.left && !node.right) {
+          return null
+        }
+
+        if (!node.left) {
+          node = node.right
+          return node
+        }
+
+        if (!node.right) {
+          node = node.left
+          return node
+        }
+
+        let rightMin = node.right
+        while (rightMin.left) {
+          rightMin = rightMin.left
+        }
+        node.data = rightMin.data
+
+        node.right = removeFunc(node.right, rightMin.data)
+        return node
       }
     }
   }
 
   min() {
-    return minNode(this.nodeRoot)
-    
-    function minNode(node) {
-      let min = null
-      if(!node) {
-        return min
-      }
-      if(node.data && !node.left ) {
-        return node.data
-      } else {
-        return minNode(node.left)
-      }
+
+    if (!this.nodeRoot) {
+      return null
     }
+
+    let node = this.nodeRoot;
+    while (node.left) {
+      node = node.left
+    }
+
+    return node.data
   }
 
   max() {
-    return maxFunc(this.nodeRoot)
     
-    function maxFunc(node) {
-      let max = null
-      if(!node) {
-        return max
-      }
-      if(node.data && !node.right ) {
-        return node.data
-      } else {
-        return maxFunc(node.right)
-      }
+    if (!this.nodeRoot) {
+      return null
     }
+
+    let node = this.nodeRoot;
+    while (node.right) {
+      node = node.right
+    }
+
+    return node.data
   }
-
-  remove(data) {
-    this.nodeRoot = removeFunc(this.nodeRoot, data)
-
-    function removeFunc(node, data) {
-      if(!node) {
-        return null
-      }
-      if(node.data > data) {
-        node.left = removeFunc(node.left, data)
-        return node
-      } else if(node.data < data) {
-        node.right = removeFunc(node.right, data)
-        return node
-      } else {
-        if(!node.left && !node.right) {
-          return null
-        }
-        if(!node.left) {
-          node = node.right
-          return node
-        }
-        if(!node.right) {
-          node = node.left
-          return node
-        }
-        let minRight = node.right
-        while(minRight.left) {
-          minRight = minRight.left
-        }
-        node.data = minRight.data
-        node.right = removeFunc(node.right, minRight.data)
-        return node
-      }
-    } 
-  }
-
-  
-
-  
 }
 
 module.exports = {
